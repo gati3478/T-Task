@@ -23,7 +23,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers(
-                        "/index",
                         "/registration",
                         "/js/**",
                         "/css/**",
@@ -39,6 +38,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .and()
                 .formLogin()
                         .loginPage("/login")
+                        .usernameParameter("email")
+                        .defaultSuccessUrl("/index?success=true", true)
                         .permitAll()
                         .and()
                 .logout()

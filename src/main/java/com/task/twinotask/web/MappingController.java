@@ -12,13 +12,18 @@ public class MappingController {
         return "index";
     }
 
+    @GetMapping("/index")
+    public String rootAlternative() {
+        return "index";
+    }
+
     @GetMapping("/login")
     public String login(Model model) {
         return "login";
     }
 
-    @GetMapping("/user")
-    public String userIndex() {
-        return "user/index";
+    @GetMapping("/client")
+    public String clientIndex() {
+        return "client/index";
     }
 }

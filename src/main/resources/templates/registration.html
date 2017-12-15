@@ -1,0 +1,90 @@
+<!doctype html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+
+    <title>Registration</title>
+    <meta name="description" content="Registration page"/>
+    <meta name="author" content="Gati"/>
+</head>
+<body>
+<div class="container">
+    <h1>Registration</h1>
+    <form th:action="@{/registration}" th:object="${client}" method="post">
+
+        <p class="error-message"
+           th:if="${#fields.hasGlobalErrors()}"
+           th:each="error : ${#fields.errors('global')}"
+           th:text="${error}">Validation error</p>
+
+        <br/>
+
+        <label for="firstName">First name: </label>
+        <input id="firstName"
+               type="text"
+               autofocus="autofocus"
+               placeholder="Your name"
+               th:field="*{firstName}" th:required="required"/>
+
+        <br/>
+
+        <label for="lastName">Last name: </label>
+        <input id="lastName"
+               type="text"
+               placeholder="Your last name"
+               th:field="*{lastName}" th:required="required"/>
+
+        <br/>
+
+        <label for="email">E-mail: </label>
+        <input id="email"
+               type="email"
+               placeholder="someone@some.com"
+               th:field="*{email}" th:required="required"/>
+
+        <br/>
+
+        <label for="password">Password: </label>
+        <input id="password"
+               type="password"
+               th:field="*{password}" th:required="required"/>
+
+        <br/>
+
+        <label for="phoneNumber">Phone Number: </label>:
+        <input type="tel"
+               id="phoneNumber"
+               placeholder="+995000000000" th:field="*{phoneNumber}"/>
+
+        <br/>
+
+        <label for="birthDate">Birth date: </label>:
+        <input type="date"
+               id="birthDate"
+               placeholder="1990-01-01" th:required="required" th:field="*{birthDate}"/>
+
+        <br/>
+
+        <label for="salary">Monthly salary: </label>:
+        <input type="number"
+               id="salary"
+               placeholder="0" th:required="required" th:field="*{salary}"/>
+
+        <br/>
+
+        <label for="liabilities">Liabilities: </label>:
+        <input type="number"
+               id="liabilities"
+               placeholder="0" th:required="required" th:field="*{liabilities}"/>
+
+        <br/>
+
+        <br/>
+        <button type="submit">Register</button>
+        <span>Already registered? <a href="/" th:href="@{/login}">Login here</a></span>
+    </form>
+</div>
+
+</body>
+</html>
