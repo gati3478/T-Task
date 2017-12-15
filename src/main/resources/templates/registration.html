@@ -13,13 +13,6 @@
     <h1>Registration</h1>
     <form th:action="@{/registration}" th:object="${client}" method="post">
 
-        <p class="error-message"
-           th:if="${#fields.hasGlobalErrors()}"
-           th:each="error : ${#fields.errors('global')}"
-           th:text="${error}">Validation error</p>
-
-        <br/>
-
         <label for="firstName">First name: </label>
         <input id="firstName"
                type="text"

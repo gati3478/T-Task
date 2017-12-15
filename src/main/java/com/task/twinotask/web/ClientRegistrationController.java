@@ -13,11 +13,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.sql.Date;
+import java.util.Calendar;
 
 @SuppressWarnings("unused")
 @Controller
 @RequestMapping("/registration")
 public class ClientRegistrationController {
+
+    public static final int AGE_LIMIT = 20;
 
     @Autowired
     private ClientService clientService;
@@ -37,18 +41,38 @@ public class ClientRegistrationController {
                                       BindingResult result) {
 
         try {
-            clientService.registerClient(clientDto);
+            int age = yearsSince(clientDto.getBirthDate());
+            if (age >= AGE_LIMIT) {
+                clientService.registerClient(clientDto);
 
-            return "redirect:/login?success=true";
+            } else {
+                result.rejectValue("birthDate", null, "Too young");
+            }
         } catch (UserAlreadyExistException e) {
             result.rejectValue("email", null, "There is already an account registered with that email");
-
-            if (result.hasErrors()) {
-                return "registration";
-            }
         }
 
-        return "login?error=true";
+        if (result.hasErrors()) {
+            return "registration";
+        }
+
+        return "redirect:/login?success=true";
+    }
+
+    public static int yearsSince(Date pastDate) {
+        Calendar present = Calendar.getInstance();
+        Calendar past = Calendar.getInstance();
+        past.setTime(pastDate);
+
+        int years = 0;
+
+        while (past.before(present)) {
+            past.add(Calendar.YEAR, 1);
+            if (past.before(present)) {
+                years++;
+            }
+        }
+        return years;
     }
 
 }
