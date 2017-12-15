@@ -1,6 +1,10 @@
 # T-Task
 Demo project for registering clients using Spring Boot, JPA and H2 using Gradle build system.
 
-Project can be run with Gradle from the command line
+
+After cloning run:
+
+<code>./gradlew build && java -jar build/libs/T-Task-0.0.1-SNAPSHOT.jar</code>
+
 
 After registering a new account, you have to login manually.
