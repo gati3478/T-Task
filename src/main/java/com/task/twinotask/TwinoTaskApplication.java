@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class TwinoTaskApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(TwinoTaskApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(TwinoTaskApplication.class, args);
+    }
 }

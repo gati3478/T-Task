@@ -21,7 +21,7 @@ import java.util.Calendar;
 @RequestMapping("/registration")
 public class ClientRegistrationController {
 
-    public static final int AGE_LIMIT = 20;
+    private static final int AGE_LIMIT = 20;
 
     @Autowired
     private ClientService clientService;
