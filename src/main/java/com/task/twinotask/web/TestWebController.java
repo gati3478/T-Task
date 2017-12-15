@@ -1,8 +1,9 @@
 package com.task.twinotask.web;
 
 import com.task.twinotask.entity.Client;
-import com.task.twinotask.entity.ProfileVisibility;
+import com.task.twinotask.exceptions.UserAlreadyExistException;
 import com.task.twinotask.service.ClientService;
+import com.task.twinotask.web.dto.ClientRegistrationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,27 +12,30 @@ import org.springframework.web.bind.annotation.RestController;
 import java.sql.Date;
 
 @RestController
-public class WebController {
-    
+public class TestWebController {
+
     @Autowired
-    ClientService clientService;
+    private ClientService clientService;
 
-    @RequestMapping("/save")
+    @RequestMapping("/test-save")
     public String process() {
-        Client client = new Client();
-        client.setFirstName("Gati");
-        client.setLastName("Petriashvili");
-        client.setBirthDate(Date.valueOf("1994-01-24"));
-        client.setEmail("giopetriashvili@gmail.com");
-        client.setLiabilities(50);
-        client.setVisibility(ProfileVisibility.REGISTERED);
-        client.setPhoneNumber("+995595473533");
-        client.setSalary(50);
-        client.setPassword("password");
-        clientService.saveClient(client);
-        return "Done";
-    }
+        try {
+            ClientRegistrationDto registration = new ClientRegistrationDto();
 
+            registration.setFirstName("Gati");
+            registration.setLastName("Petriashvili");
+            registration.setBirthDate(Date.valueOf("1994-01-24"));
+            registration.setEmail("giopetriashvili@gmail.com");
+            registration.setLiabilities(50);
+            registration.setPhoneNumber("+995595473533");
+            registration.setSalary(50);
+            registration.setPassword("password");
+            clientService.registerClient(registration);
+            return "success";
+        } catch (UserAlreadyExistException e) {
+            return "email";
+        }
+    }
 
     @RequestMapping("/find-all")
     public String findAll() {
@@ -54,8 +58,7 @@ public class WebController {
     @RequestMapping("/find-by-email")
     public String findByEmail(@RequestParam("email") String email) {
         String result = "";
-        result = clientService.findByEmailAddress(email).toString();
+        result = clientService.findByEmail(email).toString();
         return result;
     }
-
 }

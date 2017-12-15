@@ -1,16 +1,15 @@
 package com.task.twinotask.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.Collection;
 
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "client")
 public class Client implements Serializable {
 
-    private static final long serialVersionUID = -3009157732242241606L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -24,8 +23,7 @@ public class Client implements Serializable {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @JsonIgnore
-    @Column(name = "password", length = 60, nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "phone_number")
@@ -46,6 +44,15 @@ public class Client implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "profile_status", nullable = false)
     private ProfileVisibility visibility;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"))
+    private Collection<Role> roles;
 
     public Client() {
         super();
@@ -135,6 +142,14 @@ public class Client implements Serializable {
         this.visibility = visibility;
     }
 
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public int hashCode() {
         return email.hashCode();
@@ -142,14 +157,12 @@ public class Client implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Client [id=").append(id).append(", firstName=").append(firstName)
-                .append(", lastName=").append(lastName).append(", email=").append(email)
-                .append(", password=").append(password).append(", phoneNumber=").append(phoneNumber)
-                .append(", birthDate=").append(birthDate).append(", dateAdjusted").append(dateAdjusted)
-                .append(", salary=").append(salary).append(", liabilities").append(liabilities)
-                .append(", visibility").append(visibility).append("]");
-        return builder.toString();
+        return "Client [id=" + id + ", firstName=" + firstName +
+                ", lastName=" + lastName + ", email=" + email +
+                ", password=" + password + ", phoneNumber=" + phoneNumber +
+                ", birthDate=" + birthDate + ", dateAdjusted=" + dateAdjusted +
+                ", salary=" + salary + ", liabilities=" + liabilities +
+                ", visibility=" + visibility + "]";
     }
 
     @Override
