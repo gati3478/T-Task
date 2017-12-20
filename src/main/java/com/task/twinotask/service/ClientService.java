@@ -31,6 +31,14 @@ public class ClientService implements UserDetailsService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    public void setClientRepository(ClientRepository repository) {
+        clientRepository = repository;
+    }
+
+    public void setPasswordEncoder(BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
     public Client registerClient(final ClientRegistrationDto registration) throws UserAlreadyExistException {
         if (userExists(registration.getEmail())) {
             throw new UserAlreadyExistException("There is an account with that email address: " + registration.getEmail());

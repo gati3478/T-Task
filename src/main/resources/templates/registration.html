@@ -56,7 +56,7 @@
         <input type="date"
                id="birthDate"
                placeholder="1990-01-01" th:required="required" th:field="*{birthDate}"/>
-
+        <p th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}"></p>
         <br/>
 
         <label for="salary">Monthly salary: </label>:

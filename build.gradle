@@ -33,6 +33,7 @@ dependencies {
     compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
 
     // Testing
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.13.0'
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile group: 'org.springframework.security', name: 'spring-security-test'
 }

@@ -46,7 +46,7 @@ public class ClientRegistrationController {
                 clientService.registerClient(clientDto);
 
             } else {
-                result.rejectValue("birthDate", null, "Too young");
+                result.rejectValue("birthDate", null, "You should be at least 21.");
             }
         } catch (UserAlreadyExistException e) {
             result.rejectValue("email", null, "There is already an account registered with that email");
