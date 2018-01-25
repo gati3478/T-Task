@@ -35,6 +35,7 @@
                type="email"
                placeholder="someone@some.com"
                th:field="*{email}" th:required="required"/>
+		<p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
 
         <br/>
 

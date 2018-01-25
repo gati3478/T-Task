@@ -21,78 +21,81 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@SuppressWarnings({"UnusedReturnValue", "unused", "WeakerAccess"})
 @Service
 public class ClientService implements UserDetailsService {
 
-    @Autowired
-    ClientRepository clientRepository;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+	private ClientRepository clientRepository;
 
-    public void setClientRepository(ClientRepository repository) {
-        clientRepository = repository;
-    }
+	private BCryptPasswordEncoder passwordEncoder;
 
-    public void setPasswordEncoder(BCryptPasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
+	@Autowired
+	public void setClientRepository(ClientRepository repository) {
+		clientRepository = repository;
+	}
 
-    public Client registerClient(final ClientRegistrationDto registration) throws UserAlreadyExistException {
-        if (userExists(registration.getEmail())) {
-            throw new UserAlreadyExistException("There is an account with that email address: " + registration.getEmail());
-        }
+	@Autowired
+	public void setPasswordEncoder(BCryptPasswordEncoder passwordEncoder) {
+		this.passwordEncoder = passwordEncoder;
+	}
 
-        Client client = new Client();
-        client.setFirstName(registration.getFirstName());
-        client.setLastName(registration.getLastName());
-        client.setEmail(registration.getEmail());
-        client.setPassword(passwordEncoder.encode(registration.getPassword()));
-        client.setBirthDate(registration.getBirthDate());
-        client.setPhoneNumber(registration.getPhoneNumber());
-        client.setSalary(registration.getSalary());
-        client.setLiabilities(registration.getLiabilities());
-        client.setVisibility(ProfileVisibility.REGISTERED);
-        client.setRoles(Collections.singletonList(new Role("ROLE_USER")));
-        return clientRepository.save(client);
-    }
+	@SuppressWarnings("UnusedReturnValue")
+	public Client registerClient(final ClientRegistrationDto registration) throws UserAlreadyExistException {
+		if (userExists(registration.getEmail())) {
+			throw new UserAlreadyExistException("There is an account with that email address: " + registration.getEmail());
+		}
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Client client = clientRepository.findByEmail(email);
-        if (client == null) {
-            throw new UsernameNotFoundException("Invalid username.");
-        }
-        return new User(client.getEmail(),
-                client.getPassword(),
-                mapRolesToAuthorities(client.getRoles()));
-    }
+		Client client = new Client();
+		client.setFirstName(registration.getFirstName());
+		client.setLastName(registration.getLastName());
+		client.setEmail(registration.getEmail());
+		client.setPassword(passwordEncoder.encode(registration.getPassword()));
+		client.setBirthDate(registration.getBirthDate());
+		client.setPhoneNumber(registration.getPhoneNumber());
+		client.setSalary(registration.getSalary());
+		client.setLiabilities(registration.getLiabilities());
+		client.setVisibility(ProfileVisibility.REGISTERED);
+		client.setRoles(Collections.singletonList(new Role("ROLE_USER")));
+		return clientRepository.save(client);
+	}
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
-    }
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		Client client = clientRepository.findByEmail(email);
+		if (client == null) {
+			throw new UsernameNotFoundException("Invalid username.");
+		}
+		return new User(client.getEmail(),
+				client.getPassword(),
+				mapRolesToAuthorities(client.getRoles()));
+	}
 
-    public List<Client> findAll() {
-        return clientRepository.findAll();
-    }
+	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+		return roles.stream()
+				.map(role -> new SimpleGrantedAuthority(role.getName()))
+				.collect(Collectors.toList());
+	}
 
-    public Client findById(final Long id) {
-        return clientRepository.findOne(id);
-    }
+	public List<Client> findAll() {
+		return clientRepository.findAll();
+	}
 
-    public Client findByEmail(final String email) {
-        return clientRepository.findByEmail(email);
-    }
+	public Client findById(final Long id) {
+		return clientRepository.findOne(id);
+	}
 
-    public boolean userExists(final String email) {
-        return clientRepository.findByEmail(email) != null;
-    }
+	public Client findByEmail(final String email) {
+		return clientRepository.findByEmail(email);
+	}
 
-    public void delete(final Client user) {
-        clientRepository.delete(user);
-    }
+	@SuppressWarnings("WeakerAccess")
+	public boolean userExists(final String email) {
+		return clientRepository.findByEmail(email) != null;
+	}
+
+	@SuppressWarnings("unused")
+	public void delete(final Client user) {
+		clientRepository.delete(user);
+	}
 
 }

@@ -3,6 +3,7 @@ package com.task.twinotask.web;
 import com.task.twinotask.exceptions.UserAlreadyExistException;
 import com.task.twinotask.service.ClientService;
 import com.task.twinotask.web.dto.ClientRegistrationDto;
+import com.task.twinotask.web.validator.RegistrationFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,66 +14,53 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
-import java.sql.Date;
-import java.util.Calendar;
 
-@SuppressWarnings("unused")
 @Controller
 @RequestMapping("/registration")
 public class ClientRegistrationController {
 
-    private static final int AGE_LIMIT = 20;
+	private ClientService clientService;
+	private RegistrationFormValidator formValidator;
 
-    @Autowired
-    private ClientService clientService;
+	@Autowired
+	public void setClientService(ClientService clientService) {
+		this.clientService = clientService;
+	}
 
-    @ModelAttribute("client")
-    public ClientRegistrationDto clientRegistrationDto() {
-        return new ClientRegistrationDto();
-    }
+	@Autowired
+	public void setRegistrationValidator(RegistrationFormValidator validator) {
+		this.formValidator = validator;
+	}
 
-    @GetMapping
-    public String showRegistrationForm(Model model) {
-        return "registration";
-    }
+	@SuppressWarnings("unused")
+	@GetMapping
+	public String showRegistrationForm(Model model) {
+		return "registration";
+	}
 
-    @PostMapping
-    public String registerUserAccount(@ModelAttribute("client") @Valid ClientRegistrationDto clientDto,
-                                      BindingResult result) {
+	@ModelAttribute("client")
+	public ClientRegistrationDto clientRegistrationDto() {
+		return new ClientRegistrationDto();
+	}
 
-        try {
-            int age = yearsSince(clientDto.getBirthDate());
-            if (age >= AGE_LIMIT) {
-                clientService.registerClient(clientDto);
+	@PostMapping
+	public String registerUserAccount(@ModelAttribute("client") @Valid ClientRegistrationDto clientDto,
+									  BindingResult result) {
+		formValidator.validate(clientDto, result);
 
-            } else {
-                result.rejectValue("birthDate", null, "You should be at least 21.");
-            }
-        } catch (UserAlreadyExistException e) {
-            result.rejectValue("email", null, "There is already an account registered with that email");
-        }
+		if (result.hasErrors()) {
+			return "registration";
+		}
 
-        if (result.hasErrors()) {
-            return "registration";
-        }
+		try {
+			clientService.registerClient(clientDto);
+		} catch (UserAlreadyExistException e) {
+			result.rejectValue("email", null, "E-mail is already used");
+			return "registration";
+		}
 
-        return "redirect:/login?success=true";
-    }
+		return "login";
+	}
 
-    public static int yearsSince(Date pastDate) {
-        Calendar present = Calendar.getInstance();
-        Calendar past = Calendar.getInstance();
-        past.setTime(pastDate);
-
-        int years = 0;
-
-        while (past.before(present)) {
-            past.add(Calendar.YEAR, 1);
-            if (past.before(present)) {
-                years++;
-            }
-        }
-        return years;
-    }
 
 }

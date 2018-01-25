@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="ang_rest">
+
+<head>
+	<meta charset="UTF-8"/>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+	<!--suppress HtmlUnknownTarget -->
+	<script src="js/datafetch.js"></script>
+	<title>Homepage</title>
+	<meta name="description" content="Homepage"/>
+	<meta name="author" content="Gati"/>
+</head>
+<body>
+<div ng-controller="ClientData">
+	<a href="/logout">Logout</a>
+	<h3>My Info:</h3>
+	<p>ID: {{client.id}}</p>
+	<p>Name: {{client.firstName}} {{client.lastName}}</p>
+	<p>E-mail: {{client.email}}</p>
+	<p>Phone number: {{client.phoneNumber}}</p>
+	<p>Birth date: {{client.birthDate}}</p>
+	<p>Salary: {{client.salary}}</p>
+	<p>Liabilities: {{client.liabilities}}</p>
+	<p>Visibility: {{client.visibility}}</p>
+	<p>Roles: {{client.roles}}</p>
+	<br/>
+	<h4>Credit limit: {{credit.limit}}</h4>
+	<br/>
+	<h4>All users: </h4>
+	<div ng-repeat="c in clients">
+		{{c.id}} {{c.firstName}} {{c.lastName}} {{c.email}} {{c.phoneNumber}} {{c.birthDate}} {{c.salary}} {{c.liabilities}} {{c.roles}}
+	</div>
+</div>
+</body>
+</html>
