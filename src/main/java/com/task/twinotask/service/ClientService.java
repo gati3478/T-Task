@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @Service
 public class ClientService implements UserDetailsService {
 
-
 	private ClientRepository clientRepository;
 
 	private BCryptPasswordEncoder passwordEncoder;
