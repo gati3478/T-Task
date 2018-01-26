@@ -8,9 +8,9 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
-		classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
+		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+		classpath("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
 	}
 }
 
@@ -41,19 +41,19 @@ repositories {
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-security'
+	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'
-	compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity4'
-	compile group: 'com.h2database', name: 'h2'
-	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
-	compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-	compile "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
+	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+	compile('org.thymeleaf.extras:thymeleaf-extras-springsecurity4')
+	compile('com.h2database:h2')
+	compile('javax.xml.bind:jaxb-api:2.3.0')
+	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+	compile("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
 
 	// Testing
-	testCompile group: 'org.spockframework', name: 'spock-core'
-	testCompile group: 'org.spockframework', name: 'spock-spring'
-	testCompile group: 'org.mockito', name: 'mockito-core'
+	testCompile('org.spockframework:spock-core')
+	testCompile('org.spockframework:spock-spring')
+	testCompile('org.mockito:mockito-core')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile group: 'org.springframework.security', name: 'spring-security-test'
+	testCompile('org.springframework.security:spring-security-test')
 }
