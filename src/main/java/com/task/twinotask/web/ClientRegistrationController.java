@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.sql.Date;
 
 @Controller
 @RequestMapping("/registration")
@@ -40,7 +41,15 @@ public class ClientRegistrationController {
 
 	@ModelAttribute("client")
 	public ClientRegistrationDto clientRegistrationDto() {
-		return new ClientRegistrationDto();
+		return new ClientRegistrationDto(
+				"",
+				"",
+				"",
+				"",
+				"",
+				Date.valueOf("1994-01-24"),
+				0,
+				0);
 	}
 
 	@PostMapping

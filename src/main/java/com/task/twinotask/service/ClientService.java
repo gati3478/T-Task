@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,17 +46,21 @@ public class ClientService implements UserDetailsService {
 			throw new UserAlreadyExistException("There is an account with that email address: " + registration.getEmail());
 		}
 
-		Client client = new Client();
-		client.setFirstName(registration.getFirstName());
-		client.setLastName(registration.getLastName());
-		client.setEmail(registration.getEmail());
-		client.setPassword(passwordEncoder.encode(registration.getPassword()));
-		client.setBirthDate(registration.getBirthDate());
-		client.setPhoneNumber(registration.getPhoneNumber());
-		client.setSalary(registration.getSalary());
-		client.setLiabilities(registration.getLiabilities());
-		client.setVisibility(ProfileVisibility.REGISTERED);
-		client.setRoles(Collections.singletonList(new Role("ROLE_USER")));
+		Client client = new Client(
+				Objects.requireNonNull(registration.getFirstName()),
+				Objects.requireNonNull(registration.getLastName()),
+				Objects.requireNonNull(registration.getEmail()),
+				passwordEncoder.encode(Objects.requireNonNull(registration.getPassword())),
+				registration.getPhoneNumber(),
+				registration.getBirthDate(),
+				registration.getSalary(),
+				registration.getLiabilities(),
+				Collections.singletonList(new Role("ROLE_USER", -1)),
+				ProfileVisibility.REGISTERED,
+				false,
+				0L
+		);
+
 		return clientRepository.save(client);
 	}
 
@@ -67,7 +72,7 @@ public class ClientService implements UserDetailsService {
 		}
 		return new User(client.getEmail(),
 				client.getPassword(),
-				mapRolesToAuthorities(client.getRoles()));
+				mapRolesToAuthorities(Objects.requireNonNull(client.getRoles())));
 	}
 
 	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {

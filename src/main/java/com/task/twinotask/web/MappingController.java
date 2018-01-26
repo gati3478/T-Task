@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+// TODO: Change with ViewResolver
 @SuppressWarnings("unused")
 @Controller
 public class MappingController {
