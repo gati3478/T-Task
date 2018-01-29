@@ -28,9 +28,7 @@ class ClientRegistrationController(
 
 	@PostMapping
 	fun registerUserAccount(
-		@ModelAttribute("client")
-		@Valid
-		clientDto: ClientRegistrationDto,
+		@ModelAttribute("client") @Valid clientDto: ClientRegistrationDto,
 		result: BindingResult
 	): String {
 		formValidator.validate(clientDto, result)
@@ -48,6 +46,5 @@ class ClientRegistrationController(
 
 		return "login"
 	}
-
 
 }

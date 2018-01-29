@@ -43,7 +43,9 @@ class ClientInfoRestController(
 	@GetMapping("/me")
 	fun getLoggedInUser(principal: Principal): ResponseEntity<Client> {
 		val email = principal.name
-		return restTemplate.getForEntity("http://localhost:8080/find-by-email?email=$email", Client::class.java)
+		return restTemplate.getForEntity(
+			"http://localhost:8080/find-by-email?email=$email",
+			Client::class.java)
 	}
 
 	@GetMapping("/credit-limit")
