@@ -9,28 +9,28 @@ import javax.persistence.*
 data class Client(
 
 	@Column(name = "first_name", nullable = false)
-	val firstName: String = "",
+	val firstName: String,
 
 	@Column(name = "last_name", nullable = false)
-	val lastName: String = "",
+	val lastName: String,
 
 	@Column(unique = true, nullable = false)
-	val email: String = "",
+	val email: String,
 
 	@Column(name = "password", nullable = false)
-	val password: String = "",
+	val password: String,
 
 	@Column(name = "phone_number")
-	val phoneNumber: String? = "",
+	val phoneNumber: String?,
 
 	@Column(name = "birth_date", nullable = false)
-	val birthDate: Date = Date.valueOf("1994-01-24"),
+	val birthDate: Date,
 
 	@Column(name = "monthly_salary", nullable = false)
-	val salary: Int = 0,
+	val salary: Int,
 
 	@Column(name = "debt")
-	val liabilities: Int = 0,
+	val liabilities: Int,
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = [(CascadeType.ALL)])
 	@JoinTable(
@@ -38,18 +38,18 @@ data class Client(
 		joinColumns = [(JoinColumn(name = "user_id", referencedColumnName = "id"))],
 		inverseJoinColumns = [(JoinColumn(name = "role_id", referencedColumnName = "id"))]
 	)
-	val roles: Collection<Role>? = null,
+	val roles: Collection<Role>,
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "profile_status", nullable = false)
-	val visibility: ProfileVisibility? = ProfileVisibility.REGISTERED,
+	val visibility: ProfileVisibility = ProfileVisibility.REGISTERED,
 
 	@Column(name = "date_adjusted")
 	private var dateAdjusted: Boolean = false,
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	val id: Long? = 0
+	val id: Long = 0
 ) {
 	fun dateIsAdjusted(): Boolean = dateAdjusted
 

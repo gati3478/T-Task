@@ -49,7 +49,7 @@ class ClientService(
 		return User(
 			userEmail,
 			password,
-			mapRolesToAuthorities(roles!!)
+			mapRolesToAuthorities(roles)
 		)
 	}
 

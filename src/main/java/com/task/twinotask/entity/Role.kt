@@ -7,7 +7,7 @@ import javax.persistence.Id
 
 @Entity
 data class Role(
-	val name: String = "",
+	val name: String,
 
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	val id: Long = 0
