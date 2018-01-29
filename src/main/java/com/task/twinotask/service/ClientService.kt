@@ -6,7 +6,6 @@ import com.task.twinotask.exceptions.UserAlreadyExistException
 import com.task.twinotask.repository.ClientRepository
 import com.task.twinotask.web.dto.ClientRegistrationDto
 import org.springframework.context.annotation.Lazy
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
@@ -53,10 +52,10 @@ class ClientService(
 		)
 	}
 
-	private fun mapRolesToAuthorities(roles: Collection<Role>): Collection<GrantedAuthority> =
+	private fun mapRolesToAuthorities(roles: Collection<Role>) =
 		roles.map { (name) -> SimpleGrantedAuthority(name) }.toList()
 
-	fun findAll(): MutableList<Client> = clientRepository.findAll()
+	fun findAll(): List<Client> = clientRepository.findAll()
 
 	fun findById(id: Long?): Client? = clientRepository.findOne(id)
 

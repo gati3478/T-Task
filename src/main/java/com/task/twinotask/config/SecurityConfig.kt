@@ -1,5 +1,6 @@
 package com.task.twinotask.config
 
+import com.task.twinotask.web.validator.RegistrationFormValidator
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
@@ -49,6 +50,9 @@ class SecurityConfig(private val userDetailsService : UserDetailsService) : WebS
 		http.headers().frameOptions().disable()
 	}
 
+	@Bean
+	fun registrationFormValidator() = RegistrationFormValidator()
+	
 	@Bean
 	fun passwordEncoder() = BCryptPasswordEncoder()
 

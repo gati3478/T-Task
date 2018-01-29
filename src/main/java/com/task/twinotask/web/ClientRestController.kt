@@ -2,7 +2,7 @@ package com.task.twinotask.web
 
 import com.task.twinotask.entity.Client
 import com.task.twinotask.service.ClientService
-import com.task.twinotask.util.DateUtils
+import com.task.twinotask.util.yearsSince
 import com.task.twinotask.web.dto.CreditInfo
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -32,7 +32,7 @@ class ClientRestController(private val clientService: ClientService) {
 		val client = clientService.findById(id)
 
 		// User's age:
-		val age = DateUtils.yearsSince(client!!.birthDate)
+		val age = client!!.birthDate.yearsSince()
 		var creditLimit = 0
 		if (age < MAX_AGE_LIMIT) {
 			creditLimit = age * 100 + client.salary - client.liabilities
