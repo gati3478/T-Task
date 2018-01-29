@@ -24,7 +24,7 @@ data class Client(
 	val phoneNumber: String? = "",
 
 	@Column(name = "birth_date", nullable = false)
-	val birthDate: Date? = null,
+	val birthDate: Date = Date.valueOf("1994-01-24"),
 
 	@Column(name = "monthly_salary", nullable = false)
 	val salary: Int = 0,

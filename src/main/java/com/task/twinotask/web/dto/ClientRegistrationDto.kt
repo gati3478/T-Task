@@ -11,7 +11,7 @@ data class ClientRegistrationDto(
 	@NotEmpty @Email var email: String = "",
 	@NotEmpty var password: String = "",
 	var phoneNumber: String? = null,
-	var birthDate: Date,
+	var birthDate: Date = Date.valueOf("1994-01-24"),
 	@Min(value = 0) var salary: Int = 0,
 	@Min(value = 0) var liabilities: Int = 0
 )
