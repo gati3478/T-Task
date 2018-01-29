@@ -20,7 +20,7 @@ class ClientInfoRestController(
 	@GetMapping("/find-all")
 	fun findAll() = clientService.findAll()
 
-	@GetMapping(value = ["/find-by-id"])
+	@GetMapping("/find-by-id")
 	fun findById(@RequestParam("id") id: Long): ResponseEntity<Client> {
 		val client = clientService.findById(id)
 		return if (client != null) {
