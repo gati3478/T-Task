@@ -52,7 +52,7 @@ class ClientInfoRestController(
 	fun getCreditLimit(@RequestParam("id") id: Long): ResponseEntity<CreditInfo> {
 		val client = clientService.findById(id)
 
-		if (client != null) {
+		return if (client != null) {
 			// User's age:
 			val age = client.birthDate.yearsSince()
 			var creditLimit = 0
@@ -60,9 +60,9 @@ class ClientInfoRestController(
 				creditLimit = age * 100 + client.salary - client.liabilities
 			}
 
-			return ResponseEntity.ok(CreditInfo(client.id, creditLimit))
+			ResponseEntity.ok(CreditInfo(client.id, creditLimit))
 		} else {
-			return ResponseEntity.notFound().build()
+			ResponseEntity.notFound().build()
 		}
 	}
 
