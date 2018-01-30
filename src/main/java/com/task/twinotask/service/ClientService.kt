@@ -4,6 +4,7 @@ import com.task.twinotask.entity.Client
 import com.task.twinotask.entity.Role
 import com.task.twinotask.exceptions.UserAlreadyExistException
 import com.task.twinotask.repository.ClientRepository
+import com.task.twinotask.util.yearsSince
 import com.task.twinotask.web.dto.ClientRegistrationDto
 import org.springframework.context.annotation.Lazy
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -13,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+
+private const val MAX_AGE_LIMIT = 70
 
 @Service
 class ClientService(
@@ -28,15 +31,15 @@ class ClientService(
 		}
 
 		val client = Client(
-			registration.firstName,
-			registration.lastName,
-			registration.email,
-			passwordEncoder.encode(registration.password),
-			registration.phoneNumber,
-			registration.birthDate,
-			registration.salary,
-			registration.liabilities,
-			listOf(Role("ROLE_USER"))
+			firstName = registration.firstName,
+			lastName = registration.lastName,
+			email = registration.email,
+			password = passwordEncoder.encode(registration.password),
+			phoneNumber = registration.phoneNumber,
+			birthDate = registration.birthDate,
+			salary = registration.salary,
+			liabilities = registration.liabilities,
+			roles = listOf(Role("ROLE_USER"))
 		)
 
 		return clientRepository.save(client)
@@ -48,12 +51,12 @@ class ClientService(
 		return User(
 			userEmail,
 			password,
-			mapRolesToAuthorities(roles)
+			roles.mapRolesToAuthorities()
 		)
 	}
 
-	private fun mapRolesToAuthorities(roles: Collection<Role>) =
-		roles.map { (name) -> SimpleGrantedAuthority(name) }.toList()
+	private fun Collection<Role>.mapRolesToAuthorities() =
+		map { (name) -> SimpleGrantedAuthority(name) }.toList()
 
 	fun findAll(): List<Client> = clientRepository.findAll()
 
@@ -63,9 +66,22 @@ class ClientService(
 
 	fun userExists(email: String) = clientRepository.findByEmail(email) != null
 
+	fun getCreditInfoFor(client: Client): CreditInfo {
+		val age = client.birthDate.yearsSince()
+
+		var creditLimit = 0
+		if (age < MAX_AGE_LIMIT) {
+			creditLimit = age * 100 + client.salary - client.liabilities
+		}
+
+		return CreditInfo(client.id, creditLimit)
+	}
+
 	@Suppress("unused")
 	fun delete(user: Client) {
 		clientRepository.delete(user)
 	}
 
 }
+
+data class CreditInfo(val id: Long, val limit: Int)

@@ -1,6 +1,5 @@
 package com.task.twinotask.web
 
-import com.task.twinotask.exceptions.UserAlreadyExistException
 import com.task.twinotask.service.ClientService
 import com.task.twinotask.web.dto.ClientRegistrationDto
 import com.task.twinotask.web.validator.RegistrationFormValidator
@@ -37,12 +36,7 @@ class ClientRegistrationController(
 			return "registration"
 		}
 
-		try {
-			clientService.registerClient(clientDto)
-		} catch (e: UserAlreadyExistException) {
-			result.rejectValue("email", null, "E-mail is already used")
-			return "registration"
-		}
+		clientService.registerClient(clientDto)
 
 		return "login"
 	}
