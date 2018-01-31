@@ -22,7 +22,7 @@ class RegistrationFormValidator(private val clientService: ClientService) : Vali
 		val age = birthDate.yearsSince()
 
 		if (age < AGE_LIMIT) {
-			errors.rejectValue("birthDate", null, "You should be at least 21.")
+			errors.rejectValue("birthDate", null, "You should be at least 20.")
 		}
 	}
 

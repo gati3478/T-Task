@@ -5,7 +5,6 @@ import com.task.twinotask.entity.ProfileVisibility
 import com.task.twinotask.entity.Role
 import com.task.twinotask.exceptions.UserAlreadyExistException
 import com.task.twinotask.repository.ClientRepository
-import com.task.twinotask.web.dto.ClientRegistrationDto
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
@@ -15,7 +14,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import spock.lang.Specification
 import spock.lang.Subject
-import spock.mock.DetachedMockFactory
 
 import java.sql.Date
 import java.time.LocalDate
@@ -43,10 +41,10 @@ class ClientServiceSpec extends Specification {
 		notThrown(UserAlreadyExistException)
 
 		where:
-		testUser << [testUserDto("name1@domain.com"),
-					 testUserDto("name2@domain.com"),
-					 testUserDto("name3@domain.com"),
-					 testUserDto("aaaaaaaaaaaa@n.m")]
+		testUser << [TestHelper.testUserDto("name1@domain.com", 20),
+					 TestHelper.testUserDto("name2@domain.com", 21),
+					 TestHelper.testUserDto("name3@domain.com", 22),
+					 TestHelper.testUserDto("aaaaaaaaaaaa@n.m", 23)]
 	}
 
 	def "client service registers only unique users"() {
@@ -54,7 +52,7 @@ class ClientServiceSpec extends Specification {
 		entityManager.persist(testClient("name@domain.com", 10))
 
 		when: "registering by the same email"
-		def testUserDto = testUserDto("name@domain.com")
+		def testUserDto = TestHelper.testUserDto("name@domain.com", 40)
 		clientService.registerClient(testUserDto)
 
 		then: "registration results in exception"
@@ -172,19 +170,6 @@ class ClientServiceSpec extends Specification {
 		expectedLimit << [3980, 5680, 7480, 0, 0]
 	}
 
-	def testUserDto(String email) {
-		return new ClientRegistrationDto(
-				"Name",
-				"Surname",
-				email,
-				"p",
-				"123",
-				new Date(System.currentTimeMillis()) as Date,
-				1200,
-				120
-		)
-	}
-
 	def testClient(String email, int age) {
 		LocalDate ld = LocalDate.now().minusYears(age)
 		Date birthDate = Date.valueOf(ld)
@@ -211,7 +196,6 @@ class ClientServiceSpec extends Specification {
 
 	@TestConfiguration
 	static class MockConfig {
-		def detachedMockFactory = new DetachedMockFactory()
 
 		@Autowired
 		ClientRepository clientRepository
