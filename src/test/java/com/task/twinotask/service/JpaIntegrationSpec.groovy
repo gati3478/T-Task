@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import spock.lang.Specification
 
+import javax.persistence.PersistenceException
 import java.sql.Date
 
 @DataJpaTest
@@ -26,16 +27,17 @@ class JpaIntegrationSpec extends Specification {
 	@Autowired
 	BCryptPasswordEncoder passwordEncoder
 
-	def "spring data jpa saves clients"() {
+	def "repository saves clients"() {
 		given: "some registered users"
 		entityManager.persist(testClient("name1@domain.com"))
 		entityManager.persist(testClient("name2@domain.com"))
+		entityManager.persist(testClient("name3@domain.com"))
 
 		expect: "the correct count of clients inside the repository"
-		clientRepository.count() == 2L
+		clientRepository.count() == 3L
 	}
 
-	def "spring data jpa retrieves by email"() {
+	def "repository retrieves by email"() {
 		given: "some registered users"
 		entityManager.persist(testClient("name1@domain.com"))
 		entityManager.persist(testClient("name2@domain.com"))
@@ -43,10 +45,22 @@ class JpaIntegrationSpec extends Specification {
 		when: "the user for the given email is queried"
 		def client = clientRepository.findByEmail("name2@domain.com")
 
-		then: "the client should be returned"
+		then: "the correct client should be returned"
 		client.email == "name2@domain.com"
 		client.salary == 100
 		client.liabilities == 120
+		// TO-DO: client == testClient, needs custom equals method
+	}
+
+	def "repository entities are unique by email"() {
+		given: "a registered user"
+		entityManager.persist(testClient("name1@domain.com"))
+		
+		when: "the same email is used again to register"
+		entityManager.persist(testClient("name1@domain.com"))
+
+		then: "repository won't save it"
+		thrown(PersistenceException)
 	}
 
 	def testClient(String email) {

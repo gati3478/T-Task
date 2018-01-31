@@ -10,16 +10,22 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Configuration
 class WebConfig : WebMvcConfigurerAdapter() {
 
-	@Bean
-	fun restTemplate(builder: RestTemplateBuilder): RestTemplate {
-		return builder.build()
-	}
-
 	override fun addViewControllers(registry: ViewControllerRegistry) {
 		super.addViewControllers(registry)
 
 		registry.addViewController("/index").setViewName("index")
+		registry.addViewController("/").setViewName("index")
 		registry.addViewController("/login").setViewName("login")
+	}
+
+}
+
+@Configuration
+class RestConfig {
+
+	@Bean
+	fun restTemplate(builder: RestTemplateBuilder): RestTemplate {
+		return builder.build()
 	}
 
 }
