@@ -3,15 +3,12 @@ package com.task.twinotask.service
 import com.task.twinotask.entity.Client
 import com.task.twinotask.entity.ProfileVisibility
 import com.task.twinotask.entity.Role
-import org.hamcrest.Matchers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.User
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
@@ -25,7 +22,7 @@ import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
 import java.sql.Date
-import java.util.stream.Collectors
+import java.time.LocalDate
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -52,39 +49,63 @@ class ClientsInfoControllerSpec extends Specification {
 				.build()
 	}
 
-
 	@WithMockUser(username = "name9@domain.com", password = "p")
 	def "rest service fetches logged in user info"() {
-		given: "user is logged in and corresponding info can be returned"
-		def testClient = testClient("name9@domain.com")
+		setup:
+		def testClient = testClient("name9@domain.com", 33)
+
+		when: "user is logged in and corresponding info can be returned"
 		mockRestTemplate.getForEntity(!null, !null) >> ResponseEntity.ok(testClient)
 
-		expect: "logged in user info is correct"
-		def res = mvc.perform(MockMvcRequestBuilders.get("/me"))
+		then: "logged in user info is correct"
+		mvc.perform(MockMvcRequestBuilders.get("/me"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string(Matchers.containsString(testClient.email)))
+				.andExpect(MockMvcResultMatchers.jsonPath('$.email').value(testClient.email))
+				.andExpect(MockMvcResultMatchers.jsonPath('$.lastName').value(testClient.lastName))
 				.andReturn()
-		//println res.getResponse().getContentAsString()
 	}
 
-	def testUser(String email) {
-		return new User(
-				email,
-				passwordEncoder.encode("p"),
-				Collections.singletonList(new Role("ROLE_USER", 0)).stream().
-						map({ role -> new SimpleGrantedAuthority(role.name) })
-						.collect(Collectors.toList())
-		)
+	@WithMockUser(username = "name9@domain.com", password = "p")
+	def "rest service fetches credit info"() {
+		given: "specific user can be retrieved"
+		clientService.findById(_ as Long) >> client
+		clientService.getCreditInfoFor(_ as Client) >> creditLimit
+
+		expect: "logged in user info is correct"
+		mvc.perform(MockMvcRequestBuilders.get("/credit-limit?id=0"))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath('$.limit').value(creditLimit.limit))
+				.andReturn()
+
+		where:
+		client << [testClient("name1@domain.com", 34),
+				   testClient("name2@domain.com", 51),
+				   testClient("name3@domain.com", 69),
+				   testClient("name3@domain.com", 70),
+				   testClient("name4@domain.com", 71)]
+
+		creditLimit << [new CreditInfo(0, 3980),
+						new CreditInfo(0, 5680),
+						new CreditInfo(0, 7480),
+						new CreditInfo(0, 0),
+						new CreditInfo(0, 0)]
 	}
 
-	def testClient(String email) {
+	def testClient(String email, int age) {
+		LocalDate ld = LocalDate.now().minusYears(age)
+		Date birthDate = Date.valueOf(ld)
+
+		if (passwordEncoder == null) {
+			passwordEncoder = new BCryptPasswordEncoder()
+		}
+
 		return new Client(
 				"Name",
 				"Surname",
 				email,
 				passwordEncoder.encode("p"),
-				null,
-				new Date(System.currentTimeMillis()),
+				"555-555-888",
+				birthDate,
 				1000,
 				420,
 				Collections.singletonList(new Role("ROLE_USER", 0)),

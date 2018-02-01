@@ -4,12 +4,12 @@ import com.task.twinotask.entity.Client
 import com.task.twinotask.entity.ProfileVisibility
 import com.task.twinotask.entity.Role
 import com.task.twinotask.exceptions.UserAlreadyExistException
-import com.task.twinotask.repository.ClientRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Import
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import spock.lang.Specification
@@ -18,6 +18,7 @@ import spock.lang.Subject
 import java.sql.Date
 import java.time.LocalDate
 
+@Import(ClientService)
 @DataJpaTest
 class ClientServiceSpec extends Specification {
 
@@ -196,14 +197,6 @@ class ClientServiceSpec extends Specification {
 
 	@TestConfiguration
 	static class MockConfig {
-
-		@Autowired
-		ClientRepository clientRepository
-
-		@Bean
-		ClientService clientService() {
-			return new ClientService(clientRepository, passwordEncoder())
-		}
 
 		@Bean
 		BCryptPasswordEncoder passwordEncoder() {
