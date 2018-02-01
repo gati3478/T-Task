@@ -47,15 +47,20 @@ class JpaIntegrationSpec extends Specification {
 
 		then: "the correct client should be returned"
 		client.email == "name2@domain.com"
+		client.firstName == "First"
+		client.lastName == "Last"
 		client.salary == 100
 		client.liabilities == 120
-		// TO-DO: client == testClient, needs custom equals method
+		passwordEncoder.matches("p", client.password)
+		client.phoneNumber == "456-789-123"
+		client.visibility == ProfileVisibility.REGISTERED
+		!client.dateAdjusted
 	}
 
 	def "repository entities are unique by email"() {
 		given: "a registered user"
 		entityManager.persist(testClient("name1@domain.com"))
-		
+
 		when: "the same email is used again to register"
 		entityManager.persist(testClient("name1@domain.com"))
 
@@ -69,7 +74,7 @@ class JpaIntegrationSpec extends Specification {
 				"Last",
 				email,
 				passwordEncoder.encode("p"),
-				null,
+				"456-789-123",
 				new Date(System.currentTimeMillis()),
 				100,
 				120,

@@ -4,7 +4,6 @@ import com.task.twinotask.entity.Client
 import com.task.twinotask.entity.ProfileVisibility
 import com.task.twinotask.entity.Role
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -25,17 +24,16 @@ import java.sql.Date
 import java.time.LocalDate
 
 @SpringBootTest
-@AutoConfigureMockMvc
 class ClientsInfoControllerSpec extends Specification {
 
 	@Autowired
 	ClientService clientService
 
 	@Autowired
-	WebApplicationContext context
+	RestTemplate mockRestTemplate
 
 	@Autowired
-	RestTemplate mockRestTemplate
+	WebApplicationContext context
 
 	MockMvc mvc
 
@@ -49,29 +47,31 @@ class ClientsInfoControllerSpec extends Specification {
 				.build()
 	}
 
-	@WithMockUser(username = "name9@domain.com", password = "p")
+	@WithMockUser(username = "somename@domain.com")
 	def "rest service fetches logged in user info"() {
 		setup:
-		def testClient = testClient("name9@domain.com", 33)
+		def testClient = testClient("somename@domain.com", 33)
 
-		when: "user is logged in and corresponding info can be returned"
+		when: "user's info can be retrieved"
 		mockRestTemplate.getForEntity(!null, !null) >> ResponseEntity.ok(testClient)
 
 		then: "logged in user info is correct"
 		mvc.perform(MockMvcRequestBuilders.get("/me"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath('$.email').value(testClient.email))
+				.andExpect(MockMvcResultMatchers.jsonPath('$.firstName').value(testClient.firstName))
 				.andExpect(MockMvcResultMatchers.jsonPath('$.lastName').value(testClient.lastName))
+				.andExpect(MockMvcResultMatchers.jsonPath('$.liabilities').value(testClient.liabilities))
 				.andReturn()
 	}
 
-	@WithMockUser(username = "name9@domain.com", password = "p")
+	@WithMockUser(username = "name9@domain.com")
 	def "rest service fetches credit info"() {
-		given: "specific user can be retrieved"
+		given: "credit info and user can be retrieved"
 		clientService.findById(_ as Long) >> client
 		clientService.getCreditInfoFor(_ as Client) >> creditLimit
 
-		expect: "logged in user info is correct"
+		expect: "user's credit info is correct"
 		mvc.perform(MockMvcRequestBuilders.get("/credit-limit?id=0"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath('$.limit').value(creditLimit.limit))

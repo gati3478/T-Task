@@ -24,7 +24,6 @@ class SecurityConfig(private val userDetailsService : UserDetailsService) : WebS
 					"/css/**",
 					"/img/**",
 					"/webjars/**",
-					"/test-save",
 					"/find-by-id",
 					"/find-by-email",
 					"/find-all",

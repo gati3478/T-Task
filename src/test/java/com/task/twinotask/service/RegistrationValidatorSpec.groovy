@@ -11,7 +11,7 @@ import spock.lang.Subject
 import spock.mock.DetachedMockFactory
 
 @SpringBootTest
-class ValidatorSpec extends Specification {
+class RegistrationValidatorSpec extends Specification {
 
 	@Subject
 	@Autowired
@@ -20,7 +20,7 @@ class ValidatorSpec extends Specification {
 	@Autowired
 	ClientService clientService
 
-	def "validator reports duplicated email"() {
+	def "validator reports already used email"() {
 		given: "some users already exists"
 		clientService.userExists(_ as String) >> true
 
@@ -35,10 +35,10 @@ class ValidatorSpec extends Specification {
 	}
 
 	def "validator reports underage user"() {
-		given: "user with this email can be registered"
+		given: "user with some email can be registered"
 		clientService.userExists(_ as String) >> false
 
-		when: "validating registration with < AGE_LIMIT"
+		when: "validating registration of underage"
 		def testUserDto = TestHelper.testUserDto("name1@domain.com", 19)
 		def errors = new BeanPropertyBindingResult(testUserDto, "testUserDto")
 		validator.validate(testUserDto, errors)
@@ -48,10 +48,29 @@ class ValidatorSpec extends Specification {
 		errors.getFieldError("birthDate").rejectedValue == testUserDto.birthDate
 	}
 
+	def "validator reports bad email and age"() {
+		given: "some users already exist"
+		clientService.userExists(_ as String) >> true
+
+		when: "registration is validated"
+		def errors = new BeanPropertyBindingResult(testUserDto, "testUserDto")
+		validator.validate(testUserDto, errors)
+
+		then: "validator should report both bad email and age"
+		errors.hasErrors()
+		errors.getFieldError("email").rejectedValue == testUserDto.email
+		errors.getFieldError("birthDate").rejectedValue == testUserDto.birthDate
+
+		where:
+		testUserDto << [TestHelper.testUserDto("name1@domain.com", 1),
+						TestHelper.testUserDto("name1@domain.com", 10),
+						TestHelper.testUserDto("name1@domain.com", 19),
+						TestHelper.testUserDto("name1@domain.com", 0)]
+	}
+
 	def "validator reports correct registration data"() {
-		given: "user with good correct age and unused email"
+		given: "user with correct age and unused email"
 		clientService.userExists(_ as String) >> false
-		def testUserDto = TestHelper.testUserDto("name1@domain.com", 20)
 
 		when: "registration is validated"
 		def errors = new BeanPropertyBindingResult(testUserDto, "testUserDto")
@@ -59,6 +78,12 @@ class ValidatorSpec extends Specification {
 
 		then: "there should be no validation errors"
 		!errors.hasErrors()
+
+		where:
+		testUserDto << [TestHelper.testUserDto("name1@domain.com", 20),
+						TestHelper.testUserDto("name1@domain.com", 22),
+						TestHelper.testUserDto("name1@domain.com", 26),
+						TestHelper.testUserDto("name1@domain.com", 42)]
 	}
 
 	@TestConfiguration
@@ -68,11 +93,6 @@ class ValidatorSpec extends Specification {
 		@Bean
 		ClientService clientService() {
 			return detachedMockFactory.Stub(ClientService)
-		}
-
-		@Bean
-		RegistrationFormValidator registrationFormValidator() {
-			return new RegistrationFormValidator(clientService())
 		}
 	}
 }
