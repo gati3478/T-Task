@@ -9,17 +9,14 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpStatus
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.User
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
 import java.sql.Date
-import java.util.stream.Collectors
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ClientInfoControllerSpec extends Specification {
+class ClientsControllerSpec extends Specification {
 
 	@Autowired
 	ClientService clientService
@@ -70,34 +67,6 @@ class ClientInfoControllerSpec extends Specification {
 		then: "the correct user is returned"
 		entity.statusCode == HttpStatus.OK
 		entity.body.email == testClient.email
-	}
-
-	//@WithUserDetails(value = "name9@domain.com", userDetailsServiceBeanName = "clientService")
-//	@WithMockUser("name9@domain.com")
-//	def "rest service fetches logged in user"() {
-//		given: "sent request will be authorized"
-//		def testClient = testClient("name9@domain.com")
-//		def testUser = testUser(testClient.email)
-//		restTemplate = restTemplate.withBasicAuth(testClient.email, "p")
-//		clientService.findByEmail(testClient.email) >> testClient
-//		clientService.loadUserByUsername(testClient.email) >> testUser
-//
-//		when: "the logged in user is requested"
-//		def entity = restTemplate.getForEntity("/me", Client)
-//
-//		then: "correct client is returned"
-//		entity.statusCode == HttpStatus.OK
-//		entity.body.email == testClient.email
-//	}
-
-	def testUser(String email) {
-		return new User(
-				email,
-				passwordEncoder.encode("p"),
-				Collections.singletonList(new Role("ROLE_USER", 0)).stream().
-						map({ role -> new SimpleGrantedAuthority(role.name) })
-						.collect(Collectors.toList())
-		)
 	}
 
 	def testClient(String email) {
