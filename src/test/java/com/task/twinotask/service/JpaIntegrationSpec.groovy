@@ -28,13 +28,25 @@ class JpaIntegrationSpec extends Specification {
 	BCryptPasswordEncoder passwordEncoder
 
 	def "repository saves clients"() {
-		given: "some registered users"
+		given: 'nothing has been done yet'
+		
+		when:
+		def count = clientRepository.count()
+		
+		then:
+		count == 0L
+		
+		when: "we register 3 users"
 		entityManager.persist(testClient("name1@domain.com"))
 		entityManager.persist(testClient("name2@domain.com"))
 		entityManager.persist(testClient("name3@domain.com"))
+		
+		and:
+		def savedClientsEmails = clientRepository.findAll().collect { it.email }
 
-		expect: "the correct count of clients inside the repository"
+		then: "the correct count of clients inside the repository"
 		clientRepository.count() == 3L
+		savedClientsEmails.containsAll(["name1@domain.com", "name2@domain.com", "name3@domain.com"])
 	}
 
 	def "repository retrieves by email"() {

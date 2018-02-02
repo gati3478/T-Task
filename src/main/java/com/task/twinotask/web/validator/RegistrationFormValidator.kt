@@ -3,11 +3,13 @@ package com.task.twinotask.web.validator
 import com.task.twinotask.service.ClientService
 import com.task.twinotask.util.yearsSince
 import com.task.twinotask.web.dto.ClientRegistrationDto
+import org.springframework.stereotype.Component
 import org.springframework.validation.Errors
 import org.springframework.validation.Validator
 
 const val AGE_LIMIT = 20
 
+@Component
 class RegistrationFormValidator(private val clientService: ClientService) : Validator {
 
 	override fun supports(clazz: Class<*>) = ClientRegistrationDto::class.java == clazz

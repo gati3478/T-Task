@@ -36,9 +36,12 @@ class ClientServiceSpec extends Specification {
 		when: "registering with some user data"
 		def client = clientService.registerClient(testUser)
 
-		then: "registration ends with returning client"
+		then: "registration ends with returning registered user"
 		client.email == testUser.email
 		passwordEncoder.matches(testUser.password, client.password)
+		client.firstName == testUser.firstName
+		client.lastName == testUser.lastName
+		client.liabilities == testUser.liabilities
 		notThrown(UserAlreadyExistException)
 
 		where:
@@ -60,7 +63,7 @@ class ClientServiceSpec extends Specification {
 		thrown(UserAlreadyExistException)
 	}
 
-	def "client service provides authorization info"() {
+	def "client service provides authorization handler"() {
 		given: "repository containing some user"
 		def testClient = testClient("name@domain.com", 12)
 		entityManager.persist(testClient)
