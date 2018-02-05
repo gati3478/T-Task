@@ -1,39 +1,23 @@
 import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.version
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "com.task"
 version = "0.0.3-SNAPSHOT"
 
-val kotlinVersion: String by extra
-
-buildscript {
-	val kotlinVersion: String by extra { "1.2.21" }
-	val springBootVersion: String by extra { "1.5.9.RELEASE" }
-
-	repositories {
-		mavenCentral()
-	}
-
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
-		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-		classpath("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
-		classpath("org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion")
-	}
-}
+val kotlinVersion: String = "1.2.21"
 
 plugins {
-	java //id("java")
-}
-
-apply {
-	plugin("java")
-	plugin("kotlin")
-	plugin("kotlin-spring")
-	plugin("kotlin-jpa")
-	plugin("groovy")
-	plugin("org.springframework.boot")
-	plugin("idea")
+	val kotlinVersion = "1.2.21"
+	val springBootVersion = "1.5.10.RELEASE"
+	id("java")
+	id("org.jetbrains.kotlin.jvm") version kotlinVersion
+	id("groovy")
+	id("idea")
+	id("org.springframework.boot") version springBootVersion
+	id("org.jetbrains.kotlin.plugin.allopen") version kotlinVersion
+	id("org.jetbrains.kotlin.plugin.spring") version kotlinVersion
+	id("org.jetbrains.kotlin.plugin.jpa") version kotlinVersion
 }
 
 configure<JavaPluginConvention> {
