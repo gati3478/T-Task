@@ -23,7 +23,7 @@ buildscript {
 }
 
 plugins {
-	java
+	java //id("java")
 }
 
 apply {
