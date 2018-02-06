@@ -45,7 +45,7 @@ dependencies {
 		kotlin("stdlib-jdk8"),
 		kotlin("reflect"),
 		"org.codehaus.groovy:groovy-all:2.4.13"
-	).forEach { implementation(it) }
+	).forEach { compile(it) }
 
 	// Testing
 	listOf(
